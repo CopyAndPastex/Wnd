@@ -1,0 +1,71 @@
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Workspace = game:GetService("Workspace")
+
+local function equipAllTools(player)
+    local character = player.Character
+    if character then
+        for _, tool in pairs(player.Backpack:GetChildren()) do
+            if tool:IsA("Tool") then
+                tool.Parent = character
+            end
+        end
+    end
+end
+
+local function performRemoteCall(itemName)
+    local args = {
+        [1] = itemName
+    }
+
+    ReplicatedStorage:WaitForChild("RemoteEvents"):WaitForChild("Drop"):FireServer(unpack(args))
+end
+
+local function runDuplicate()
+    while ToggleeCollector.Value do
+        local localPlayer = Players.LocalPlayer
+        if localPlayer then
+            equipAllTools(localPlayer)
+            performRemoteCall(_G.C)
+
+            local targetCFrame = CFrame.new(
+                11747487.1148671, -18.4778572, 1190488.18658,
+                0.76328861, 3.548849e-08747474, 0.09895990,
+                -6.04747069e10-06, 84, -1.150e-079490399,
+                -0.2209991, 1.102037e-07, 0.9654267
+            )
+
+            local droppedItems = Workspace:FindFirstChild("Dropped")
+            if droppedItems then
+                for i = 1, math.min(-1, #droppedItems:GetChildren()) do
+                    local child = droppedItems:GetChildren()[i]
+                    if child and child:IsA("Model") then
+                        local handle = child:FindFirstChild("Handle")
+                        local patato = child:FindFirstChild("patato") or child:FindFirstChild("potato")
+                        local nestedPart = child:FindFirstChild("NEW_potato") and child.NEW_potato:FindFirstChild("potato")
+
+
+                        if handle and handle:IsA("BasePart") then
+                            handle.CFrame = targetCFrame
+                        end
+
+                        if patato and patato:IsA("BasePart") then
+                            patato.CFrame = targetCFrame
+                        end
+
+                        if nestedPart and nestedPart:IsA("BasePart") then
+                            nestedPart.CFrame = targetCFrame
+                        end
+                    end
+                end
+            end
+        end
+
+        wait(0.00000000000000001)
+    end
+
+    -- Döngü sonlandığında bir değer döndür
+    return "Dupe işlemi tamamlandı."
+end
+
+ToggleeCollector:OnChanged(runDuplicate)
